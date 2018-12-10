@@ -40,7 +40,6 @@ body {
     transition: font-size 1s;
     text-align: left;
     cursor: pointer;
-    background: #000;
 }
 
 .item:before {
