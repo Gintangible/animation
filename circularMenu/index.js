@@ -14,16 +14,19 @@
         const RADIUS = 250;
         let pos = [];
         let pos1 = [];
-        const s = 0.52 * Math.PI / 180;
+        const N = 10; // n 半圆分成的份数
         pos[0] = 90.75;
         for (i = 1; i < len; i++) {
             pos[i] = pos[i - 1] - 0.2;
             last_pos = pos[i];
         }
+
         for (let i = 0; i < len; i++) {
+            let RAD = Math.PI * (90 - 180 / N * i) / 180;
+            console.log(90 - 180 / N * i)
             pos1.push({
                 left: 240 + RADIUS * Math.sin(pos[i]),
-                top: 240 + RADIUS * Math.cos(pos[i])
+                top: i > N - 1 ? 600 : 0 +  RADIUS * Math.cos(RAD)
             })
         }
 
