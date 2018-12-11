@@ -1,29 +1,23 @@
 ;
 (function () {
+    let elem = document.querySelectorAll('.item');
+    const srart_pos = 90.75;
+    const len = elem.length;
+    let pos = [];
+    const s = 0.52 * Math.PI / 180;
+    const RADIUS = 250;
+
     function allocationItems() {
         let elem = document.querySelectorAll('.item');
-        let pos = setPosition(elem.length);
-        console.log(pos);
-        Array.from(elem).forEach((item, index) => {
-            item.style.left = pos[index].left + 'px';
-            item.style.top = pos[index].top + 'px';
-        });
-    }
-
-    function setPosition(len) {
-        const RADIUS = 250;
-        let pos = [];
-        const N = 12; // n 半圆分成的份数
-
-        for (let i = 0; i < len; i++) {
-            let RAD = Math.PI * (90 - 180 / N * i) / 180;
-            pos.push({
-                left: 240 + RADIUS * Math.cos(RAD),
-                top: i > N - 1 ? 600 : 240 - RADIUS * Math.sin(RAD)
-            })
+        pos[0] = srart_pos;
+        for (i = 1; i < len; i++) {
+            pos[i] = pos[i - 1] - 0.2;
         }
-
-        return pos;
+        Array.from(elem).forEach((item, index) => {
+            item.style.left = 240 + RADIUS * Math.sin(pos[index]) + 'px';
+            item.style.top = 240 + RADIUS * Math.cos(pos[index]) + 'px';
+        });
+        imgShow(elem[6]);
     }
 
     function imgShow(ele) {
@@ -37,25 +31,36 @@
 
     function animation(args, flag) {
         const SPEED = 400;
-        document.getElementById("pic").className = "hide";
+        let el = document.querySelectorAll('.item');
 
         function animate(draw, duration, callback) {
             var start = performance.now();
             requestAnimationFrame(function animate(time) {
+                //time?
                 var timePassed = time - start;
-                console.log(time, start)
                 if (timePassed > duration)
                     timePassed = duration;
-                draw(timePassed);
+                draw()
                 if (timePassed < duration) {
                     requestAnimationFrame(animate);
-                } else callback();
+                } else {
+                    callback()
+                };
             });
-        }
-        animate(function (timePassed) {
-            allocationItems();
+        };
 
-        }, SPEED, changeItems(flag));
+        animate(() => {
+            Array.from(el).forEach((item, index) => {
+                item.style.left = 240 + RADIUS * Math.sin(pos[index]) + 'px';
+                item.style.top = 240 + RADIUS * Math.cos(pos[index]) + 'px';
+                if (flag) {
+                    pos[index] += s;
+                } else {
+                    pos[index] -= s;
+                }
+            });
+
+        }, SPEED, () => changeItems(flag));
     }
 
     function changeItems(flag) {
@@ -68,8 +73,9 @@
             list.insertBefore(ch, list.firstChild);
         }
         allocationItems();
-        imgShow(elem[6]);
     }
+
+
 
     let prev = document.querySelector('.prev');
     prev.addEventListener('click', () => animation({}, 1));
